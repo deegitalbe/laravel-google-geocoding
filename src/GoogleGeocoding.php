@@ -133,11 +133,31 @@ class GoogleGeocoding
     }
 
     /**
+     * Remove the language of the query.
+     */
+    public function removeLanguage()
+    {
+        $this->unsetParameter('language');
+
+        return $this;
+    }
+
+    /**
      * Define the country of the query.
      */
     public function country($country)
     {
         $this->addComponent('country', strtoupper($country));
+
+        return $this;
+    }
+
+    /**
+     * Remove the country of the query.
+     */
+    public function removeCountry()
+    {
+        $this->unsetComponent('country');
 
         return $this;
     }
@@ -215,7 +235,7 @@ class GoogleGeocoding
      */
     public function buildUrl()
     {
-        $this->url = $this->baseUrl . '?' . urldecode( http_build_query( $this->getUrlParameters() ) );
+        $this->url = rtrim($this->baseUrl . '?' . urldecode( http_build_query( $this->getUrlParameters() ) ), '?');
 
         return $this;
     }

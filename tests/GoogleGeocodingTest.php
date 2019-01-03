@@ -358,6 +358,24 @@ class GoogleGeocodingClassTest extends TestCase
     }
 
     /** @test */
+    public function it_can_unset_the_language_of_the_query()
+    {
+        $geocoder = app('geocoder');
+        $geocoder->baseUrl = 'https://www.google.com';
+        $geocoder->urlParameters = [];
+
+        $geocoder->language('fr');
+        $response = $geocoder->removeLanguage();
+
+        $this->assertEquals(
+            'https://www.google.com',
+            $geocoder->url
+        );
+
+        $this->assertInstanceOf(GoogleGeocoding::class, $response);
+    }
+
+    /** @test */
     public function it_can_set_the_country_of_the_query()
     {
         $geocoder = app('geocoder');
@@ -368,6 +386,24 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertEquals(
             'https://www.google.com?components=country:US',
+            $geocoder->url
+        );
+
+        $this->assertInstanceOf(GoogleGeocoding::class, $response);
+    }
+
+    /** @test */
+    public function it_can_unset_the_country_of_the_query()
+    {
+        $geocoder = app('geocoder');
+        $geocoder->baseUrl = 'https://www.google.com';
+        $geocoder->urlParameters = [];
+
+        $geocoder->country('fr');
+        $response = $geocoder->removeCountry();
+
+        $this->assertEquals(
+            'https://www.google.com',
             $geocoder->url
         );
 
