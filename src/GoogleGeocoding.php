@@ -166,6 +166,17 @@ class GoogleGeocoding
     }
 
     /**
+     * Unset a component.
+     */
+    public function unsetComponent($key)
+    {
+        unset($this->components[$key]);
+        $this->buildUrl();
+
+        return $this;
+    }
+
+    /**
      * Add a new key value pair to the url parameters and build the URL.
      */
     public function addParameter($key, $value = null)
@@ -183,6 +194,17 @@ class GoogleGeocoding
     public function addParameters($pairs)
     {
         $this->urlParameters = array_merge($this->urlParameters, $pairs);
+        $this->buildUrl();
+
+        return $this;
+    }
+
+    /**
+     * Unset an URL parameter.
+     */
+    public function unsetParameter($key)
+    {
+        unset($this->urlParameters[$key]);
         $this->buildUrl();
 
         return $this;

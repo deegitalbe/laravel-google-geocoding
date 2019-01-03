@@ -251,6 +251,46 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
+    
+    /** @test */
+    public function it_can_unset_an_url_parameter()
+    {
+        $geocoder = app('geocoder');
+        $geocoder->baseUrl = 'https://www.google.com';
+        $geocoder->urlParameters = [];
+        $geocoder->components = [];
+
+        $geocoder->addComponent('key', 'value');
+        $geocoder->addComponent('two', 'three');
+        $response = $geocoder->unsetComponent('key');
+
+        $this->assertEquals(
+            'https://www.google.com?components=two:three',
+            $geocoder->url
+        );
+
+        $this->assertInstanceOf(GoogleGeocoding::class, $response);
+    }
+    
+    /** @test */
+    public function it_can_unset_a_component()
+    {
+        $geocoder = app('geocoder');
+        $geocoder->baseUrl = 'https://www.google.com';
+        $geocoder->urlParameters = [];
+        $geocoder->components = [];
+
+        $geocoder->addParameter('key', 'value');
+        $geocoder->addParameter('two', 'three');
+        $response = $geocoder->unsetParameter('key');
+
+        $this->assertEquals(
+            'https://www.google.com?two=three',
+            $geocoder->url
+        );
+
+        $this->assertInstanceOf(GoogleGeocoding::class, $response);
+    }
 
     /** @test */
     public function it_can_build_an_url_with_just_the_url_parameters_set()
