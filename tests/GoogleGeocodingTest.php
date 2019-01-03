@@ -85,6 +85,21 @@ class GoogleGeocodingClassTest extends TestCase
     }
 
     /** @test */
+    public function it_will_set_the_country_as_component_if_set_in_the_config()
+    {
+        config(['google-geocoding.country' => 'be']);
+
+        $geocoder = app('geocoder');
+
+        $this->assertEquals(
+            [
+                'country' => 'BE'
+            ],
+            $geocoder->components
+        );
+    }
+
+    /** @test */
     public function it_can_build_the_url_using_the_parameters_defined_and_return_itself()
     {
         $geocoder = app('geocoder');

@@ -53,6 +53,10 @@ class GoogleGeocoding
             'sensor' => 'false'
         ];
 
+        if ( config('google-geocoding.country') ) {
+            $this->components = ['country' => strtoupper( config('google-geocoding.country') )];
+        }
+
         $this->buildUrl();
     }
 
