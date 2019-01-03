@@ -15,7 +15,7 @@ class GoogleGeocodingServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/google-geocoding.php' => config_path('google-geocoding'),
+                __DIR__.'/../config/google-geocoding.php' => config_path('google-geocoding.php'),
             ], 'config');
         }
     }
