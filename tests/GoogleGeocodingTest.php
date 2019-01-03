@@ -475,6 +475,60 @@ class GoogleGeocodingClassTest extends TestCase
     }
 
     /** @test */
+    public function using_the_coordinates_method_will_always_unset_the_components_as_they_do_not_well_work_together()
+    {
+        $geocoder = app('geocoder');
+        $geocoder->baseUrl = 'https://www.google.com';
+        $geocoder->urlParameters = [];
+        $geocoder->components = ['country' => 'BE', 'postal_code' => '4020'];
+
+        $response = $geocoder->coordinates(40.730610, -73.935242);
+
+        $this->assertEquals(
+            'https://www.google.com?latlng=40.73061,-73.935242',
+            $geocoder->url
+        );
+
+        $this->assertInstanceOf(GoogleGeocoding::class, $response);
+    }
+
+    /** @test */
+    public function using_the_coordinates_method_with_the_third_parameter_set_to_true_will_keep_the_components()
+    {
+        $geocoder = app('geocoder');
+        $geocoder->baseUrl = 'https://www.google.com';
+        $geocoder->urlParameters = [];
+        $geocoder->components = ['country' => 'BE', 'postal_code' => '4020'];
+
+        $response = $geocoder->coordinates(40.730610, -73.935242, true);
+
+        $this->assertEquals(
+            'https://www.google.com?latlng=40.73061,-73.935242&components=country:BE|postal_code:4020',
+            $geocoder->url
+        );
+
+        $this->assertInstanceOf(GoogleGeocoding::class, $response);
+    }
+
+    /** @test */
+    public function using_the_coordinates_with_components_method_will_keep_the_components()
+    {
+        $geocoder = app('geocoder');
+        $geocoder->baseUrl = 'https://www.google.com';
+        $geocoder->urlParameters = [];
+        $geocoder->components = ['country' => 'BE', 'postal_code' => '4020'];
+
+        $response = $geocoder->coordinatesWithComponents(40.730610, -73.935242);
+
+        $this->assertEquals(
+            'https://www.google.com?latlng=40.73061,-73.935242&components=country:BE|postal_code:4020',
+            $geocoder->url
+        );
+
+        $this->assertInstanceOf(GoogleGeocoding::class, $response);
+    }
+
+    /** @test */
     public function it_can_get_the_results()
     {
         $geocoder = $this->mock(GoogleGeocoding::class, true);

@@ -115,11 +115,23 @@ class GoogleGeocoding
     /**
      * Define the coordinates of the query.
      */
-    public function coordinates($latitude, $longitude)
+    public function coordinates($latitude, $longitude, $keepComponents = false)
     {
+        if ( ! $keepComponents ) {
+            $this->unsetAllComponents();
+        }
+
         $this->addParameter('latlng', $latitude . ',' . $longitude);
 
         return $this;
+    }
+
+    /**
+     * Define the coordinates of the query and keep the components by setting the flag to true.
+     */
+    public function coordinatesWithComponents($latitude, $longitude)
+    {
+        return $this->coordinates($latitude, $longitude, true);
     }
 
     /**
@@ -192,6 +204,18 @@ class GoogleGeocoding
     {
         unset($this->components[$key]);
         $this->buildUrl();
+
+        return $this;
+    }
+
+    /**
+     * Unset all the components.
+     */
+    public function unsetAllComponents()
+    {
+        foreach ( $this->components as $key => $value ) {
+            $this->unsetComponent($key);
+        }
 
         return $this;
     }
