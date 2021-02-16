@@ -61,6 +61,17 @@ class GoogleGeocoding
     }
 
     /**
+     * Set the locale used for the request.
+     */
+    public function locale($locale)
+    {
+        $this->urlParameters['language'] = $locale;
+        $this->buildUrl();
+
+        return $this;
+    }
+
+    /**
      * Get the results from the API and return a collection.
      */
     public function get()
