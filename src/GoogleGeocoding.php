@@ -100,7 +100,7 @@ class GoogleGeocoding
             return null;
         }
 
-        return cache()->remember($this->getCacheKey(), config('google-geocoding.cache_duration'), function () use ($body) {
+        return cache()->remember($this->getCacheKey(), now()->addMinutes(config('google-geocoding.cache_duration')), function () use ($body) {
             $this->storeInLogs($body);
             $class = config('google-geocoding.classes.collection');
             return $class::make( $body['results'] );

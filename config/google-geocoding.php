@@ -30,7 +30,7 @@ return [
     'fallback_language' => 'en',
 
     /**
-     * The cache duration used to store Google's results.
+     * The cache duration used to store Google's results, the value should be in minutes.
      * 
      * The default is set to 30 days which is complient with Google Maps Platform Terms of Service.
      * See: https://developers.google.com/maps/documentation/geocoding/geocoding-strategies#caching
