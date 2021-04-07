@@ -3,6 +3,8 @@
 namespace FHusquinet\GoogleGeocoding;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 
@@ -77,6 +79,7 @@ class GoogleGeocoding
     public function get()
     {
         if ( cache()->has( $this->getCacheKey() ) ) {
+            $this->increaseCacheUsesInLogs();
             return cache()->get( $this->getCacheKey() );
         }
 
@@ -84,10 +87,19 @@ class GoogleGeocoding
         $body = json_decode($response->getBody(), true);
 
         if ( ! isset($body['status']) || ( $body['status'] !== 'OK' && $body['status'] !== 'ZERO_RESULTS' ) ) {
+            if ( config('google-geocoding.log_errors') ) {
+                if ( $body['error_message'] ) {
+                    Log::error('Google returned an error when requesting geocoding results with url ['.$this->getUrl().']: '.$body['error_message']);
+                } else {
+                    Log::error('Google returned an error when requesting geocoding results with url ['.$this->getUrl().']: '.json_encode($body['error_message']));
+                }
+            }
+
             return null;
         }
 
         return cache()->remember($this->getCacheKey(), config('google-geocoding.cache_duration'), function () use ($body) {
+            $this->storeInLogs($body);
             $class = config('google-geocoding.classes.collection');
             return $class::make( $body['results'] );
         });
@@ -307,6 +319,39 @@ class GoogleGeocoding
     public function getCacheKey()
     {
         return 'google-geocoding-' . $this->getUrl();
+    }
+
+    protected function storeInLogs(array $response)
+    {
+        if ( ! config('google-geocoding.log_requests') ) {
+            return;
+        }
+
+        try {
+            DB::table(config('google-geocoding.table_name'))->insert([
+                'url' => $this->getUrl(),
+                'parameters' => $this->getUrlParameters(),
+                'response' => $response
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Could not save google geocoding request in logs: ' . $e->getMessage());
+        }
+    }
+
+    protected function increaseCacheUsesInLogs()
+    {
+        if ( ! config('google-geocoding.log_requests') ) {
+            return;
+        }
+
+        try {
+            $log = DB::table(config('google-geocoding.table_name'))->where('url', $this->getURL())->first();
+            if ( $log ) {
+                $log->update(['cache_uses' => $log->cache_uses + 1]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Could not update cache use for google geocoding request with url ['.$this->getUrl().'].');
+        }
     }
 
 }

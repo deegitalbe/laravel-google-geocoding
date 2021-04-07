@@ -46,6 +46,19 @@ return [
     'classes' => [
         'collection' => \FHusquinet\GoogleGeocoding\GeocodingResults::class,
         'item' => \FHusquinet\GoogleGeocoding\GeocodingResult::class,
-    ]
+    ],
+
+    /**
+     * Log errors when the Google API returns an error.
+     */
+    'log_errors' => true,
+
+    /**
+     * Log all requests made into your database, with the parameters and returned data.
+     * This is usefull for debugging requests, and knowing how much you use to prevent
+     * over-spending.
+     */
+    'log_requests' => true,
+    'table_name' => 'google_geocoding_requests'
     
 ];

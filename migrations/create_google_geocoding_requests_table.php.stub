@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateGoogleGeocodingRequestsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::create(config('google-geocoding.table_name'), function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('url')->nullable();
+            $table->json('parameters')->nullable();
+            $table->json('response')->nullable();
+            $table->integer('cache_uses')->default(0);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop(config('google-geocoding.table_name'));
+    }
+}

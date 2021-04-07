@@ -17,6 +17,13 @@ class GoogleGeocodingServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/google-geocoding.php' => config_path('google-geocoding.php'),
             ], 'config');
+
+            if (! class_exists('CreateGoogleGeocodingRequestsTable')) {
+                $timestamp = date('Y_m_d_His', time());
+                $this->publishes([
+                    __DIR__.'/../migrations/create_google_geocoding_requests_table.php.stub' => database_path("/migrations/{$timestamp}_create_google_geocoding_requests_table.php"),
+                ], 'migrations');
+            }
         }
     }
 
