@@ -94,6 +94,8 @@ class GoogleGeocoding
                     Log::error('Google returned an error when requesting geocoding results with url ['.$this->getUrl().']: '.json_encode($body['error_message']));
                 }
             }
+            
+            $this->storeInLogs($body);
 
             return null;
         }
@@ -329,6 +331,7 @@ class GoogleGeocoding
 
         try {
             DB::table(config('google-geocoding.table_name'))->insert([
+                'successful' => isset($response['status']) ? $response['status'] == 'OK' : false,
                 'url' => $this->getUrl(),
                 'parameters' => json_encode($this->getUrlParameters()),
                 'response' => json_encode($response),
