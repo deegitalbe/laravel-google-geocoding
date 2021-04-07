@@ -16,6 +16,7 @@ class CreateGoogleGeocodingRequestsTable extends Migration
             $table->json('parameters')->nullable();
             $table->json('response')->nullable();
             $table->integer('cache_uses')->default(0);
+            $table->boolean('loaded_from_cache')->default(0);
             $table->timestamps();
         });
     }

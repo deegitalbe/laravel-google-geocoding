@@ -321,7 +321,7 @@ class GoogleGeocoding
         return 'google-geocoding-' . $this->getUrl();
     }
 
-    protected function storeInLogs(array $response)
+    protected function storeInLogs(array $response, bool $cached = false)
     {
         if ( ! config('google-geocoding.log_requests') ) {
             return;
@@ -330,8 +330,11 @@ class GoogleGeocoding
         try {
             DB::table(config('google-geocoding.table_name'))->insert([
                 'url' => $this->getUrl(),
-                'parameters' => $this->getUrlParameters(),
-                'response' => $response
+                'parameters' => json_encode($this->getUrlParameters()),
+                'response' => json_encode($response),
+                'loaded_from_cache' => $cached,
+                'created_at' => now()->toDateTimeString(),
+                'updated_at' => now()->toDateTimeString(),
             ]);
         } catch (\Exception $e) {
             Log::error('Could not save google geocoding request in logs: ' . $e->getMessage());
@@ -345,13 +348,17 @@ class GoogleGeocoding
         }
 
         try {
-            $log = DB::table(config('google-geocoding.table_name'))->where('url', $this->getURL())->first();
-            if ( $log ) {
-                $log->update(['cache_uses' => $log->cache_uses + 1]);
-            }
+            DB::table(config('google-geocoding.table_name'))
+                ->where('url', $this->getURL())
+                ->update([
+                    'cache_uses' => DB::raw('cache_uses + 1'),
+                    'updated_at' => now()->toDateTimeString(),
+                ]);
         } catch (\Exception $e) {
             Log::error('Could not update cache use for google geocoding request with url ['.$this->getUrl().'].');
         }
+
+        $this->storeInLogs([], true);
     }
 
 }
