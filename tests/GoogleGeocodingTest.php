@@ -3,40 +3,24 @@
 namespace FHusquinet\GoogleGeocoding\Tests;
 
 use Auth;
-use Mockery;
-use GuzzleHttp\Client;
-
-use GuzzleHttp\Middleware;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
-use InvalidArgumentException;
-use GuzzleHttp\Handler\MockHandler;
-use Illuminate\Support\Facades\Cache;
 use FHusquinet\GoogleGeocoding\GeocodingResult;
-use FHusquinet\GoogleGeocoding\GoogleGeocoding;
 use FHusquinet\GoogleGeocoding\GeocodingResults;
-use FHusquinet\GoogleGeocoding\Tests\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use FHusquinet\GoogleGeocoding\Tests\Models\DefaultSeoUser;
-use FHusquinet\GoogleGeocoding\Tests\Helpers\GeocodingTestHelpers;
+use FHusquinet\GoogleGeocoding\GoogleGeocoding;
 use FHusquinet\GoogleGeocoding\Tests\Classes\CustomGeocodingCollectionClass;
+use FHusquinet\GoogleGeocoding\Tests\Helpers\GeocodingTestHelpers;
+use FHusquinet\GoogleGeocoding\Tests\Models\DefaultSeoUser;
+use FHusquinet\GoogleGeocoding\Tests\Models\User;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 
 class GoogleGeocodingClassTest extends TestCase
 {
     use GeocodingTestHelpers;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->setKey('azerty');
-        $this->setLanguage('en');
-        $this->setCacheDuration(60 * 24 * 30);
-        config()->set(['google-geocoding.classes' => [
-            'collection' => \FHusquinet\GoogleGeocoding\GeocodingResults::class,
-            'item' => \FHusquinet\GoogleGeocoding\GeocodingResult::class,
-        ]]);
-    }
 
     /** @test */
     public function it_will_throw_an_exception_if_no_key_is_set_in_the_config()
@@ -49,7 +33,8 @@ class GoogleGeocodingClassTest extends TestCase
     }
 
     /** @test */
-    public function it_will_contain_the_key_set_and_the_fallback_language_in_the_config_and_the_sensor_parameter_set_to_false_by_default()
+    public function it_will_contain_the_key_set_and_the_fallback_language_in_the_config_and_the_sensor_parameter_set_to_false_by_default(
+    )
     {
         $this->setKey('azerty');
         $this->setLanguage(null);
@@ -58,16 +43,17 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertEquals(
             [
-                'key' => 'azerty',
-                'sensor' => 'false',
-                'language' => config('google-geocoding.fallback_language')
+                'key'      => 'azerty',
+                'sensor'   => 'false',
+                'language' => config('google-geocoding.fallback_language'),
             ],
             $geocoder->urlParameters
         );
     }
 
     /** @test */
-    public function it_will_contain_the_key_set_and_the_language_in_the_config_and_the_sensor_parameter_set_to_false_by_default()
+    public function it_will_contain_the_key_set_and_the_language_in_the_config_and_the_sensor_parameter_set_to_false_by_default(
+    )
     {
         $this->setKey('azerty');
         $this->setLanguage('fr');
@@ -76,9 +62,9 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertEquals(
             [
-                'key' => 'azerty',
-                'sensor' => 'false',
-                'language' => 'fr'
+                'key'      => 'azerty',
+                'sensor'   => 'false',
+                'language' => 'fr',
             ],
             $geocoder->urlParameters
         );
@@ -93,7 +79,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertEquals(
             [
-                'country' => 'BE'
+                'country' => 'BE',
             ],
             $geocoder->components
         );
@@ -115,7 +101,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
-    
+
     /** @test */
     public function it_can_add_the_first_parameter_to_the_base_url_and_return_itself()
     {
@@ -144,7 +130,7 @@ class GoogleGeocodingClassTest extends TestCase
             'my-url'
         );
     }
-    
+
     /** @test */
     public function it_can_add_the_first_parameter_using_an_array_to_the_base_url_and_return_itself()
     {
@@ -161,7 +147,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
-    
+
     /** @test */
     public function it_can_add_the_a_second_parameter_to_the_base_url_and_return_itself()
     {
@@ -179,7 +165,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
-    
+
     /** @test */
     public function it_can_add_the_multiple_parameters_at_once_and_return_itself()
     {
@@ -196,7 +182,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
-    
+
     /** @test */
     public function it_can_add_the_first_component_using_an_array_to_the_base_url_and_return_itself()
     {
@@ -214,7 +200,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
-    
+
     /** @test */
     public function it_can_add_the_a_second_component_to_the_base_url_and_return_itself()
     {
@@ -233,7 +219,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
-    
+
     /** @test */
     public function it_can_add_the_multiple_components_at_once_and_return_itself()
     {
@@ -251,7 +237,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
-    
+
     /** @test */
     public function it_can_unset_an_url_parameter()
     {
@@ -271,7 +257,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $this->assertInstanceOf(GoogleGeocoding::class, $response);
     }
-    
+
     /** @test */
     public function it_can_unset_a_component()
     {
@@ -415,14 +401,14 @@ class GoogleGeocodingClassTest extends TestCase
     {
         // Create a mock and queue one response.;
         $mock = new MockHandler([
-            new Response(200)  
-        ]);    
-   
-        $container = [];   
-        $history = Middleware::history($container);    
-   
-        $stack = HandlerStack::create($mock);  
-        // Add the history middleware to the handler stack.    
+            new Response(200),
+        ]);
+
+        $container = [];
+        $history = Middleware::history($container);
+
+        $stack = HandlerStack::create($mock);
+        // Add the history middleware to the handler stack.
         $stack->push($history);
         $client = new Client(['handler' => $stack]);
 
@@ -433,10 +419,10 @@ class GoogleGeocodingClassTest extends TestCase
 
         $response = $geocoder->callApi();
 
-        $url = (string) $container[0]['request']->getUri();
-   
-        $this->assertEquals(count($container), 1); 
-        $this->assertEquals($response->getStatusCode(), 200);  
+        $url = (string)$container[0]['request']->getUri();
+
+        $this->assertEquals(count($container), 1);
+        $this->assertEquals($response->getStatusCode(), 200);
         $this->assertEquals($url, 'my-url');
     }
 
@@ -535,69 +521,69 @@ class GoogleGeocodingClassTest extends TestCase
 
         $response = $this->createGuzzleResponse([
             "results" => [
-              [
-                "address_components" => [
-                  [
-                    "long_name" => "New York",
-                    "short_name" => "New York",
-                    "types" => [
-                      "locality",
-                      "political",
+                [
+                    "address_components" => [
+                        [
+                            "long_name"  => "New York",
+                            "short_name" => "New York",
+                            "types"      => [
+                                "locality",
+                                "political",
+                            ],
+                        ],
+                        [
+                            "long_name"  => "État de New York",
+                            "short_name" => "NY",
+                            "types"      => [
+                                "administrative_area_level_1",
+                                "political",
+                            ],
+                        ],
+                        [
+                            "long_name"  => "États-Unis",
+                            "short_name" => "US",
+                            "types"      => [
+                                "country",
+                                "political",
+                            ],
+                        ],
                     ],
-                  ],
-                  [
-                    "long_name" => "État de New York",
-                    "short_name" => "NY",
-                    "types" => [
-                      "administrative_area_level_1",
-                      "political",
+                    "formatted_address"  => "New York, État de New York, États-Unis",
+                    "geometry"           => [
+                        "bounds"        => [
+                            "northeast" => [
+                                "lat" => 40.9175771,
+                                "lng" => -73.7002721,
+                            ],
+                            "southwest" => [
+                                "lat" => 40.4773991,
+                                "lng" => -74.2590899,
+                            ],
+                        ],
+                        "location"      => [
+                            "lat" => 40.7127753,
+                            "lng" => -74.0059728,
+                        ],
+                        "location_type" => "APPROXIMATE",
+                        "viewport"      => [
+                            "northeast" => [
+                                "lat" => 40.9175771,
+                                "lng" => -73.7002721,
+                            ],
+                            "southwest" => [
+                                "lat" => 40.4773991,
+                                "lng" => -74.2590899,
+                            ],
+                        ],
                     ],
-                  ],
-                  [
-                    "long_name" => "États-Unis",
-                    "short_name" => "US",
-                    "types" => [
-                      "country",
-                      "political",
+                    "place_id"           => "ChIJOwg_06VPwokRYv534QaPC8g",
+                    "types"              => [
+                        "locality",
+                        "political",
                     ],
-                  ],
                 ],
-                "formatted_address" => "New York, État de New York, États-Unis",
-                "geometry" => [
-                  "bounds" => [
-                    "northeast" => [
-                      "lat" => 40.9175771,
-                      "lng" => -73.7002721,
-                    ],
-                    "southwest" => [
-                      "lat" => 40.4773991,
-                      "lng" => -74.2590899,
-                    ],
-                  ],
-                  "location" => [
-                    "lat" => 40.7127753,
-                    "lng" => -74.0059728,
-                  ],
-                  "location_type" => "APPROXIMATE",
-                  "viewport" => [
-                    "northeast" => [
-                      "lat" => 40.9175771,
-                      "lng" => -73.7002721,
-                    ],
-                    "southwest" => [
-                      "lat" => 40.4773991,
-                      "lng" => -74.2590899,
-                    ],
-                  ],
-                ],
-                "place_id" => "ChIJOwg_06VPwokRYv534QaPC8g",
-                "types" => [
-                  "locality",
-                  "political",
-                ],
-              ],
             ],
-            "status" => "OK",
+            "status"  => "OK",
         ]);
 
         $geocoder
@@ -616,7 +602,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $response = $this->createGuzzleResponse([
             "results" => [],
-            "status" => "ZERO_RESULTS",
+            "status"  => "ZERO_RESULTS",
         ]);
 
         $geocoder
@@ -635,7 +621,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $response = $this->createGuzzleResponse([
             "results" => [],
-            "status" => "INVALID_REQUEST",
+            "status"  => "INVALID_REQUEST",
         ]);
 
         $geocoder
@@ -667,71 +653,71 @@ class GoogleGeocodingClassTest extends TestCase
 
         $results = [
             [
-            "address_components" => [
-                [
-                "long_name" => "New York",
-                "short_name" => "New York",
-                "types" => [
+                "address_components" => [
+                    [
+                        "long_name"  => "New York",
+                        "short_name" => "New York",
+                        "types"      => [
+                            "locality",
+                            "political",
+                        ],
+                    ],
+                    [
+                        "long_name"  => "État de New York",
+                        "short_name" => "NY",
+                        "types"      => [
+                            "administrative_area_level_1",
+                            "political",
+                        ],
+                    ],
+                    [
+                        "long_name"  => "États-Unis",
+                        "short_name" => "US",
+                        "types"      => [
+                            "country",
+                            "political",
+                        ],
+                    ],
+                ],
+                "formatted_address"  => "New York, État de New York, États-Unis",
+                "geometry"           => [
+                    "bounds"        => [
+                        "northeast" => [
+                            "lat" => 40.9175771,
+                            "lng" => -73.7002721,
+                        ],
+                        "southwest" => [
+                            "lat" => 40.4773991,
+                            "lng" => -74.2590899,
+                        ],
+                    ],
+                    "location"      => [
+                        "lat" => 40.7127753,
+                        "lng" => -74.0059728,
+                    ],
+                    "location_type" => "APPROXIMATE",
+                    "viewport"      => [
+                        "northeast" => [
+                            "lat" => 40.9175771,
+                            "lng" => -73.7002721,
+                        ],
+                        "southwest" => [
+                            "lat" => 40.4773991,
+                            "lng" => -74.2590899,
+                        ],
+                    ],
+                ],
+                "place_id"           => "ChIJOwg_06VPwokRYv534QaPC8g",
+                "types"              => [
                     "locality",
                     "political",
                 ],
-                ],
-                [
-                "long_name" => "État de New York",
-                "short_name" => "NY",
-                "types" => [
-                    "administrative_area_level_1",
-                    "political",
-                ],
-                ],
-                [
-                "long_name" => "États-Unis",
-                "short_name" => "US",
-                "types" => [
-                    "country",
-                    "political",
-                ],
-                ],
             ],
-            "formatted_address" => "New York, État de New York, États-Unis",
-            "geometry" => [
-                "bounds" => [
-                "northeast" => [
-                    "lat" => 40.9175771,
-                    "lng" => -73.7002721,
-                ],
-                "southwest" => [
-                    "lat" => 40.4773991,
-                    "lng" => -74.2590899,
-                ],
-                ],
-                "location" => [
-                "lat" => 40.7127753,
-                "lng" => -74.0059728,
-                ],
-                "location_type" => "APPROXIMATE",
-                "viewport" => [
-                "northeast" => [
-                    "lat" => 40.9175771,
-                    "lng" => -73.7002721,
-                ],
-                "southwest" => [
-                    "lat" => 40.4773991,
-                    "lng" => -74.2590899,
-                ],
-                ],
-            ],
-            "place_id" => "ChIJOwg_06VPwokRYv534QaPC8g",
-            "types" => [
-                "locality",
-                "political",
-            ],
-          ]
         ];
 
         $response = $this->createGuzzleResponse([
             "results" => $results,
-            "status" => "OK",
+            "status"  => "OK",
         ]);
 
         $geocoder
@@ -746,7 +732,7 @@ class GoogleGeocodingClassTest extends TestCase
         Cache::shouldReceive('remember')
             ->once()
             ->withArgs(function ($key, $duration, $closure) {
-                return $key == 'cache-key' && $duration == config('google-geocoding.cache_duration');
+                return $key == 'cache-key' && $duration->timestamp == now()->addMinutes(config('google-geocoding.cache_duration'))->timestamp;
             })
             ->andReturn('cached-results');
 
@@ -791,7 +777,7 @@ class GoogleGeocodingClassTest extends TestCase
 
         $response = $this->createGuzzleResponse([
             "results" => [],
-            "status" => "INVALID_REQUEST",
+            "status"  => "INVALID_REQUEST",
         ]);
 
         $geocoder
@@ -814,75 +800,77 @@ class GoogleGeocodingClassTest extends TestCase
     /** @test */
     public function the_collection_class_returned_can_be_customized_through_the_config()
     {
-        config(['google-geocoding.classes.collection' => \FHusquinet\GoogleGeocoding\Tests\Classes\CustomGeocodingCollectionClass::class]);
+        config(
+            ['google-geocoding.classes.collection' => CustomGeocodingCollectionClass::class]
+        );
 
         $geocoder = $this->mock(GoogleGeocoding::class, true);
 
         $response = $this->createGuzzleResponse([
             "results" => [
-              [
-                "address_components" => [
-                  [
-                    "long_name" => "New York",
-                    "short_name" => "New York",
-                    "types" => [
-                      "locality",
-                      "political",
+                [
+                    "address_components" => [
+                        [
+                            "long_name"  => "New York",
+                            "short_name" => "New York",
+                            "types"      => [
+                                "locality",
+                                "political",
+                            ],
+                        ],
+                        [
+                            "long_name"  => "État de New York",
+                            "short_name" => "NY",
+                            "types"      => [
+                                "administrative_area_level_1",
+                                "political",
+                            ],
+                        ],
+                        [
+                            "long_name"  => "États-Unis",
+                            "short_name" => "US",
+                            "types"      => [
+                                "country",
+                                "political",
+                            ],
+                        ],
                     ],
-                  ],
-                  [
-                    "long_name" => "État de New York",
-                    "short_name" => "NY",
-                    "types" => [
-                      "administrative_area_level_1",
-                      "political",
+                    "formatted_address"  => "New York, État de New York, États-Unis",
+                    "geometry"           => [
+                        "bounds"        => [
+                            "northeast" => [
+                                "lat" => 40.9175771,
+                                "lng" => -73.7002721,
+                            ],
+                            "southwest" => [
+                                "lat" => 40.4773991,
+                                "lng" => -74.2590899,
+                            ],
+                        ],
+                        "location"      => [
+                            "lat" => 40.7127753,
+                            "lng" => -74.0059728,
+                        ],
+                        "location_type" => "APPROXIMATE",
+                        "viewport"      => [
+                            "northeast" => [
+                                "lat" => 40.9175771,
+                                "lng" => -73.7002721,
+                            ],
+                            "southwest" => [
+                                "lat" => 40.4773991,
+                                "lng" => -74.2590899,
+                            ],
+                        ],
                     ],
-                  ],
-                  [
-                    "long_name" => "États-Unis",
-                    "short_name" => "US",
-                    "types" => [
-                      "country",
-                      "political",
+                    "place_id"           => "ChIJOwg_06VPwokRYv534QaPC8g",
+                    "types"              => [
+                        "locality",
+                        "political",
                     ],
-                  ],
                 ],
-                "formatted_address" => "New York, État de New York, États-Unis",
-                "geometry" => [
-                  "bounds" => [
-                    "northeast" => [
-                      "lat" => 40.9175771,
-                      "lng" => -73.7002721,
-                    ],
-                    "southwest" => [
-                      "lat" => 40.4773991,
-                      "lng" => -74.2590899,
-                    ],
-                  ],
-                  "location" => [
-                    "lat" => 40.7127753,
-                    "lng" => -74.0059728,
-                  ],
-                  "location_type" => "APPROXIMATE",
-                  "viewport" => [
-                    "northeast" => [
-                      "lat" => 40.9175771,
-                      "lng" => -73.7002721,
-                    ],
-                    "southwest" => [
-                      "lat" => 40.4773991,
-                      "lng" => -74.2590899,
-                    ],
-                  ],
-                ],
-                "place_id" => "ChIJOwg_06VPwokRYv534QaPC8g",
-                "types" => [
-                  "locality",
-                  "political",
-                ],
-              ],
             ],
-            "status" => "OK",
+            "status"  => "OK",
         ]);
 
         $geocoder
@@ -917,5 +905,20 @@ class GoogleGeocodingClassTest extends TestCase
         $this->assertNull(
             $geocoder->first()
         );
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setKey('azerty');
+        $this->setLanguage('en');
+        $this->setCacheDuration(60 * 24 * 30);
+        config()->set([
+            'google-geocoding.classes' => [
+                'collection' => GeocodingResults::class,
+                'item'       => GeocodingResult::class,
+            ],
+        ]);
     }
 }

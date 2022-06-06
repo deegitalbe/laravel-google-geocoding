@@ -2,8 +2,8 @@
 
 namespace FHusquinet\GoogleGeocoding\Tests\Helpers;
 
-use Mockery;
 use GuzzleHttp\Psr7\Response;
+use Mockery;
 
 trait GeocodingTestHelpers
 {
@@ -26,7 +26,7 @@ trait GeocodingTestHelpers
 
     public function mock($class, $partial = false)
     {
-        if ( $partial ) {
+        if ($partial) {
             $mock = Mockery::mock($class)->makePartial();
         } else {
             $mock = Mockery::mock($class);
@@ -39,9 +39,9 @@ trait GeocodingTestHelpers
 
     public function createGuzzleResponse($body, $status = 200, $headers = [])
     {
-        if ( is_array($body) ) {
+        if (is_array($body)) {
             $body = json_encode($body);
         }
-        return new \GuzzleHttp\Psr7\Response($status, $headers, $body);
+        return new Response($status, $headers, $body);
     }
 }

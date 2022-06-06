@@ -6,7 +6,7 @@ use FHusquinet\GoogleGeocoding\GeocodingResult;
 
 class CustomGeocodingResultClass extends GeocodingResult
 {
-    
+
     public function toArray()
     {
         return [

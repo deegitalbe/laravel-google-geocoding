@@ -12,7 +12,7 @@ class GeocodingResult implements Arrayable
      */
     public function __construct($data = [])
     {
-        foreach ( $data as $key => $value ) {
+        foreach ($data as $key => $value) {
             $this->{$key} = $value;
         }
     }
@@ -20,7 +20,8 @@ class GeocodingResult implements Arrayable
     /**
      * Create a new instance.
      *
-     * @param  mixed  $data
+     * @param mixed $data
+     *
      * @return static
      */
     public static function make($data = [])
@@ -36,18 +37,18 @@ class GeocodingResult implements Arrayable
     public function toArray()
     {
         $data = [
-            'country' => '',
-            'region' => '',
-            'city' => '',
-            'postal_code' => '',
-            'street_name' => '',
+            'country'       => '',
+            'region'        => '',
+            'city'          => '',
+            'postal_code'   => '',
+            'street_name'   => '',
             'street_number' => '',
-            'latitude'  => $this->geometry['location']['lat'],
-            'longitude' => $this->geometry['location']['lng'],
+            'latitude'      => $this->geometry['location']['lat'],
+            'longitude'     => $this->geometry['location']['lng'],
         ];
 
-        foreach ( $this->address_components as $component ) {
-            foreach ( $component['types'] as $type ) {
+        foreach ($this->address_components as $component) {
+            foreach ($component['types'] as $type) {
                 if ($type == 'street_number' && empty($data['street_number'])) {
                     $data['street_number'] = $component['long_name'];
                 }
@@ -63,12 +64,12 @@ class GeocodingResult implements Arrayable
                 if ($type == 'country' && empty($data['country'])) {
                     $data['country'] = $component['long_name'];
                 }
-                if (($type == 'administrative_area_level_1' || $type == 'administrative_area_level_2') && empty($data['region']) ) {
+                if (($type == 'administrative_area_level_1' || $type == 'administrative_area_level_2') && empty($data['region'])) {
                     $data['region'] = $component['long_name'];
                 }
             }
         }
-        
+
         return $data;
     }
 }
