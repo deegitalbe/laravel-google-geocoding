@@ -1,5 +1,5 @@
 {
-  "name": "fhusquinet/laravel-google-geocoding",
+  "name": "renepardon/laravel-google-geocoding",
   "description": "Easy to use API to retrieve geocoding results from Google in your Laravel application levering cache.",
   "keywords": [
     "fhusquinet",
@@ -7,7 +7,7 @@
     "geocoding",
     "laravel"
   ],
-  "homepage": "https://github.com/fhusquinet/laravel-google-geocoding",
+  "homepage": "https://github.com/renepardon/laravel-google-geocoding",
   "license": "MIT",
   "authors": [
     {
